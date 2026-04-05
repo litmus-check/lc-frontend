@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Triage Report</title>
+	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2226%22%20height%3D%2235%22%20viewBox%3D%220%200%2026%2035%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cg%20clip-path%3D%22url(%23clip0_3879_2772)%22%3E%0A%3Cpath%20d%3D%22M10.6%2033.9148V22.9434L1%2028.4291L10.6%2033.9148Z%22%20fill%3D%22%23AE00FF%22%20stroke%3D%22white%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M15.4016%2020.1992L10.6016%2022.9421V33.9135L25.0016%2025.6849L15.4016%2020.1992Z%22%20fill%3D%22%23EA3962%22%20stroke%3D%22white%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M10.6%206.48566L1%201V28.4285L10.6%2022.9428V6.48566Z%22%20fill%3D%22%234542CC%22%20stroke%3D%22white%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%3C%2Fg%3E%0A%3Cdefs%3E%0A%3CclipPath%20id%3D%22clip0_3879_2772%22%3E%0A%3Crect%20width%3D%2226%22%20height%3D%2235%22%20fill%3D%22white%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3C%2Fsvg%3E%0A">
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			background-color: #e5e5e5;
+			color: #1a1a1a;
+			line-height: 1.5;
+			padding: 12px;
+			font-size: 14px;
+		}
+		
+		.container {
+			max-width: 1260px;
+			margin: 0 auto;
+			background: #f5f5f5;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px rgba(174, 0, 255, 0.1);
+			overflow: hidden;
+		}
+		
+		.header {
+			background: #f0f0f0;
+			border-bottom: 2px solid #d0d0d0;
+			padding: 16px 24px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+		}
+		
+		.header-logo {
+			display: flex;
+			align-items: center;
+			width: 150px;
+		}
+		
+		.header-logo svg {
+			height: 48px;
+			width: auto;
+		}
+		
+		.header h1 {
+			font-size: 1.8em;
+			font-weight: 600;
+			color: #1a1a1a;
+			margin: 0;
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		
+		.summary {
+			padding: 16px 24px;
+			background: #e8e8e8;
+			border-bottom: 1px solid #d0d0d0;
+		}
+		
+		
+		.summary-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 12px;
+			margin-top: 0;
+			max-width: 800px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		
+		.summary-card {
+			background: #f5f5f5;
+			padding: 12px 16px;
+			border-radius: 6px;
+			border-left: 3px solid #ae00ff;
+			box-shadow: 0 1px 2px rgba(174, 0, 255, 0.08);
+		}
+		
+		.summary-card h3 {
+			font-size: 0.75em;
+			color: #1a1a1a;
+			margin-bottom: 6px;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			font-weight: 600;
+		}
+		
+		.summary-card .value {
+			font-size: 1.6em;
+			font-weight: 700;
+			color: #1a1a1a;
+		}
+		
+		.tabs {
+			display: flex;
+			border-bottom: 2px solid #d0d0d0;
+			background: #f0f0f0;
+		}
+		
+		.tab {
+			flex: 1;
+			padding: 12px 20px;
+			background: #e5e5e5;
+			border: none;
+			cursor: pointer;
+			font-size: 0.9em;
+			font-weight: 500;
+			color: #1a1a1a;
+			transition: all 0.3s;
+			border-bottom: 3px solid transparent;
+		}
+		
+		.tab:hover {
+			background: #d8d8d8;
+		}
+		
+		.tab.active {
+			background: #f5f5f5;
+			color: #1a1a1a;
+			border-bottom-color: #ae00ff;
+		}
+		
+		.tab-content {
+			display: none;
+			padding: 24px;
+			min-height: 400px;
+		}
+		
+		.tab-content.active {
+			display: block;
+		}
+		
+		.test-item {
+			background: #f5f5f5;
+			border: 1px solid #c0c0c0;
+			border-radius: 6px;
+			margin-bottom: 10px;
+			overflow: hidden;
+			transition: all 0.2s;
+			box-shadow: 0 1px 2px rgba(174, 0, 255, 0.05);
+		}
+		
+		.test-item:hover {
+			box-shadow: 0 2px 6px rgba(174, 0, 255, 0.1);
+			border-color: #ae00ff;
+		}
+		
+		.test-header {
+			padding: 10px 16px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			background: #e8e8e8;
+			border-bottom: 1px solid transparent;
+		}
+		
+		.test-header:hover {
+			background: #e0e0e0;
+		}
+		
+		.test-item.expanded .test-header {
+			border-bottom-color: #c0c0c0;
+			background: #e5e5e5;
+		}
+		
+		.test-header-left {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex: 1;
+		}
+		
+		.action-icon {
+			font-size: 1.2em;
+			line-height: 1;
+		}
+		
+		.test-name {
+			font-weight: 500;
+			color: #1a1a1a;
+			flex: 1;
+			font-size: 0.9em;
+		}
+		
+		.severity-badge {
+			display: inline-block;
+			padding: 3px 10px;
+			border-radius: 10px;
+			font-size: 0.75em;
+			font-weight: 600;
+			text-transform: uppercase;
+			margin-left: 8px;
+			letter-spacing: 0.3px;
+		}
+		
+		.severity-critical {
+			background: #fee;
+			color: #c33;
+		}
+		
+		.severity-high {
+			background: #fee;
+			color: #c33;
+		}
+		
+		.severity-medium {
+			background: #ffe8cc;
+			color: #c85;
+		}
+		
+		.severity-low {
+			background: #fff8cc;
+			color: #aa5;
+		}
+		
+		.test-header .expand-icon {
+			font-size: 0.85em;
+			color: #ae00ff;
+			transition: transform 0.3s;
+		}
+		
+		.test-item.expanded .test-header .expand-icon {
+			transform: rotate(180deg);
+		}
+		
+		.test-details {
+			display: none;
+			padding: 16px;
+			background: #f0f0f0;
+			border-top: 1px solid #c0c0c0;
+		}
+		
+		.test-item.expanded .test-details {
+			display: block;
+		}
+		
+		.details-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.85em;
+		}
+		
+		.details-table tr {
+			border-bottom: 1px solid #e8e8e8;
+		}
+		
+		.details-table tr:last-child {
+			border-bottom: none;
+		}
+		
+		.details-table td {
+			padding: 10px 12px;
+			vertical-align: top;
+		}
+		
+		.details-table td:first-child {
+			font-weight: 600;
+			color: #1a1a1a;
+			width: 140px;
+			font-size: 0.9em;
+		}
+		
+		.details-table td:last-child {
+			color: #1a1a1a;
+		}
+		
+		.details-table .detailed-reasoning {
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			max-width: 900px;
+			line-height: 1.6;
+			font-size: 0.9em;
+		}
+		
+		.skipped-table {
+			width: 100%;
+			border-collapse: collapse;
+			background: #f5f5f5;
+			font-size: 0.9em;
+		}
+		
+		.skipped-table th {
+			background: #e8e8e8;
+			padding: 10px 12px;
+			text-align: left;
+			font-weight: 600;
+			color: #1a1a1a;
+			border-bottom: 2px solid #c0c0c0;
+			font-size: 0.85em;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+		
+		.skipped-table td {
+			padding: 10px 12px;
+			border-bottom: 1px solid #d8d8d8;
+			color: #1a1a1a;
+		}
+		
+		.skipped-table tr:hover {
+			background: #e8e8e8;
+		}
+		
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+			color: #1a1a1a;
+		}
+		
+		.empty-state-icon {
+			font-size: 4em;
+			margin-bottom: 20px;
+		}
+		
+		.section-header {
+			background: #d0d0d0;
+			padding: 14px 20px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border: none;
+			border-radius: 8px;
+			margin-bottom: 16px;
+			font-weight: 600;
+			color: #1a1a1a;
+			transition: all 0.2s;
+			box-shadow: 0 2px 4px rgba(174, 0, 255, 0.1);
+			font-size: 0.95em;
+		}
+		
+		.section-header:hover {
+			box-shadow: 0 3px 6px rgba(174, 0, 255, 0.15);
+			background: #c8c8c8;
+			transform: translateY(-1px);
+		}
+		
+		.section-header .section-title {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.section-header .section-title span:last-child {
+			font-weight: 400;
+			opacity: 0.9;
+			font-size: 0.9em;
+		}
+		
+		.section-content {
+			display: none;
+			margin-bottom: 24px;
+			margin-left: 8px;
+			padding-left: 16px;
+			border-left: 3px solid #ae00ff;
+		}
+		
+		.section-header.expanded + .section-content {
+			display: block;
+		}
+		
+		.section-header .expand-icon {
+			font-size: 0.9em;
+			color: #ae00ff;
+			transition: transform 0.3s;
+			opacity: 0.8;
+		}
+		
+		.section-header.expanded .expand-icon {
+			transform: rotate(180deg);
+		}
+		
+		.ticket-details-section {
+			margin-top: 16px;
+			border-top: 1px solid #d0d0d0;
+			padding-top: 16px;
+		}
+		
+		.ticket-details-header {
+			background: #e0e0e0;
+			padding: 10px 14px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-radius: 4px;
+			margin-bottom: 8px;
+			transition: all 0.2s;
+			font-weight: 600;
+			font-size: 0.9em;
+		}
+		
+		.ticket-details-header:hover {
+			background: #d5d5d5;
+		}
+		
+		.ticket-details-header.expanded {
+			background: #d8d8d8;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+			margin-bottom: 0;
+		}
+		
+		.ticket-details-header .expand-icon {
+			font-size: 0.8em;
+			color: #ae00ff;
+			transition: transform 0.3s;
+		}
+		
+		.ticket-details-header.expanded .expand-icon {
+			transform: rotate(45deg);
+		}
+		
+		.ticket-details-content {
+			display: none;
+			background: #f8f8f8;
+			border: 1px solid #d0d0d0;
+			border-top: none;
+			border-radius: 0 0 4px 4px;
+			padding: 12px;
+		}
+		
+		.ticket-details-header.expanded + .ticket-details-content {
+			display: block;
+		}
+		
+		.ticket-field {
+			margin-bottom: 16px;
+		}
+		
+		.ticket-field:last-child {
+			margin-bottom: 0;
+		}
+		
+		.ticket-field-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+		}
+		
+		.ticket-field-label {
+			font-weight: 600;
+			font-size: 0.85em;
+			color: #1a1a1a;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+		
+		.copy-button {
+			background: #ae00ff;
+			color: white;
+			border: none;
+			padding: 4px 10px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.75em;
+			font-weight: 500;
+			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+		
+		.copy-button:hover {
+			background: #8d00cc;
+		}
+		
+		.copy-button:active {
+			background: #7a00b3;
+		}
+		
+		.copy-button.copied {
+			background: #4caf50;
+		}
+		
+		.ticket-field-content {
+			background: white;
+			padding: 12px;
+			border-radius: 4px;
+			border: 1px solid #d0d0d0;
+			font-size: 0.9em;
+			line-height: 1.6;
+		}
+		
+		.ticket-summary-content {
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			color: #1a1a1a;
+		}
+		
+		.ticket-description-content {
+			color: #1a1a1a;
+		}
+		
+		.ticket-description-content h1,
+		.ticket-description-content h2,
+		.ticket-description-content h3,
+		.ticket-description-content h4,
+		.ticket-description-content h5,
+		.ticket-description-content h6 {
+			margin-top: 16px;
+			margin-bottom: 8px;
+			font-weight: 600;
+		}
+		
+		.ticket-description-content h1 { font-size: 1.5em; }
+		.ticket-description-content h2 { font-size: 1.3em; }
+		.ticket-description-content h3 { font-size: 1.1em; }
+		
+		.ticket-description-content p {
+			margin-bottom: 12px;
+		}
+		
+		.ticket-description-content ul,
+		.ticket-description-content ol {
+			margin-left: 20px;
+			margin-bottom: 12px;
+		}
+		
+		.ticket-description-content li {
+			margin-bottom: 6px;
+		}
+		
+		.ticket-description-content code {
+			background: #f0f0f0;
+			padding: 2px 6px;
+			border-radius: 3px;
+			font-family: 'Monaco', 'Courier New', monospace;
+			font-size: 0.9em;
+		}
+		
+		.ticket-description-content pre {
+			background: #f0f0f0;
+			padding: 12px;
+			border-radius: 4px;
+			overflow-x: auto;
+			margin-bottom: 12px;
+		}
+		
+		.ticket-description-content pre code {
+			background: none;
+			padding: 0;
+		}
+		
+		.ticket-description-content blockquote {
+			border-left: 3px solid #d0d0d0;
+			padding-left: 12px;
+			margin-left: 0;
+			color: #666;
+			margin-bottom: 12px;
+		}
+		
+		.ticket-description-content a {
+			color: #0066cc;
+			text-decoration: none;
+		}
+		
+		.ticket-description-content a:hover {
+			text-decoration: underline;
+		}
+		
+		.ticket-description-content table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-bottom: 12px;
+		}
+		
+		.ticket-description-content table th,
+		.ticket-description-content table td {
+			border: 1px solid #d0d0d0;
+			padding: 8px;
+			text-align: left;
+		}
+		
+		.ticket-description-content table th {
+			background: #f0f0f0;
+			font-weight: 600;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="header-logo"><svg width="128" height="48" viewBox="0 0 128 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M45.152 33C43.168 33 41.728 32.568 40.832 31.704C39.952 30.824 39.512 29.536 39.512 27.84V16.2H42.344V27.84C42.344 28.848 42.568 29.592 43.016 30.072C43.48 30.536 44.192 30.768 45.152 30.768H50.528V33H45.152ZM53.3308 16.2H56.1628V33H53.3308V16.2ZM64.0569 18.432H58.8489V16.2H72.0729V18.432H66.8889V33H64.0569V18.432ZM74.7292 16.2H76.2412C76.9932 16.2 77.6012 16.304 78.0652 16.512C78.5292 16.72 78.9372 17.048 79.2892 17.496C79.6412 17.944 80.0332 18.6 80.4652 19.464L82.5772 23.616L84.6892 19.464C85.1212 18.6 85.5132 17.944 85.8652 17.496C86.2172 17.048 86.6252 16.72 87.0892 16.512C87.5532 16.304 88.1612 16.2 88.9132 16.2H90.4252V33H87.8332V19.128C87.6252 19.144 87.4412 19.24 87.2812 19.416C87.1372 19.576 86.9612 19.856 86.7532 20.256L82.5772 28.032L78.4012 20.256C78.1772 19.84 77.9932 19.552 77.8492 19.392C77.7052 19.216 77.5292 19.12 77.3212 19.104V33H74.7292V16.2ZM100.603 33.288C98.4911 33.288 96.8671 32.84 95.7311 31.944C94.6111 31.032 94.0511 29.768 94.0511 28.152V16.2H96.8831V28.152C96.8831 29.112 97.1951 29.84 97.8191 30.336C98.4591 30.832 99.3871 31.08 100.603 31.08C101.819 31.08 102.739 30.832 103.363 30.336C104.003 29.84 104.323 29.112 104.323 28.152V16.2H107.155V28.152C107.155 29.768 106.587 31.032 105.451 31.944C104.331 32.84 102.715 33.288 100.603 33.288ZM116.008 33.288C114.904 33.288 113.968 33.176 113.2 32.952C112.448 32.712 111.8 32.368 111.256 31.92C110.712 31.472 110.16 30.88 109.6 30.144L111.52 28.536C112.176 29.448 112.832 30.096 113.488 30.48C114.16 30.864 114.992 31.056 115.984 31.056C117.328 31.056 118.328 30.84 118.984 30.408C119.64 29.976 119.968 29.312 119.968 28.416C119.968 27.92 119.824 27.52 119.536 27.216C119.264 26.896 118.776 26.624 118.072 26.4C117.384 26.16 116.352 25.896 114.976 25.608C113.408 25.288 112.24 24.728 111.472 23.928C110.704 23.128 110.32 22.064 110.32 20.736C110.32 19.76 110.568 18.912 111.064 18.192C111.56 17.456 112.264 16.896 113.176 16.512C114.088 16.112 115.16 15.912 116.392 15.912C117.896 15.912 119.12 16.144 120.064 16.608C121.024 17.072 121.784 17.76 122.344 18.672L120.472 20.208C119.848 19.488 119.232 18.968 118.624 18.648C118.032 18.312 117.28 18.144 116.368 18.144C115.344 18.144 114.552 18.376 113.992 18.84C113.432 19.288 113.152 19.928 113.152 20.76C113.152 21.512 113.464 22.088 114.088 22.488C114.712 22.872 115.576 23.184 116.68 23.424C118.104 23.712 119.24 24.032 120.088 24.384C120.936 24.72 121.6 25.208 122.08 25.848C122.56 26.488 122.799 27.344 122.799 28.416C122.799 31.664 120.536 33.288 116.008 33.288Z" fill="#2B2B2B"/>
+<path d="M17.6271 39.0115V28.9805L8.90625 33.996L17.6271 39.0115Z" fill="#AE00FF" stroke="#2B2B2B" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M21.9933 26.4688L17.6328 28.9765V39.0075L30.7141 31.4843L21.9933 26.4688Z" fill="#EA3962" stroke="#2B2B2B" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M17.6271 13.9295L8.90625 8.91406V33.9915L17.6271 28.976V13.9295Z" fill="#4542CC" stroke="#2B2B2B" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+</div>
+			<h1>Triage Report</h1>
+			<div></div>
+		</div>
+		
+		
+		<div class="summary">
+			<div class="summary-grid">
+				<div class="summary-card">
+					<h3>🐞 Bugs to Raise</h3>
+					<div class="value">3</div>
+				</div>
+				<div class="summary-card">
+					<h3>🔧 Tests to Modify</h3>
+					<div class="value">4</div>
+				</div>
+				<div class="summary-card">
+					<h3>🔄 Run Again</h3>
+					<div class="value">1</div>
+				</div>
+				<div class="summary-card">
+					<h3>🔍 Review Manually</h3>
+					<div class="value">0</div>
+				</div>
+			</div>
+		</div>
+	
+		
+		<div class="tabs">
+			<button class="tab active" data-tab="triage-results">Triage Results (8)</button>
+			<button class="tab" data-tab="skipped-tests">Skipped Tests (24)</button>
+		</div>
+		
+		<div id="triage-results" class="tab-content active">
+			
+		<div class="section-header expanded">
+			<div class="section-title">
+				<span>🐞 Bugs to Raise</span>
+				<span style="font-weight: normal; color: #666;">(3)</span>
+			</div>
+			<span class="expand-icon">▼</span>
+		</div>
+		<div class="section-content">
+			
+			<div class="test-item" id="test--bugs-to-raise-0">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🐞</span>
+						<span class="test-name">verify welcome header displays after login</span>
+						<span class="severity-badge severity-high">high</span>
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>c9ada33041fbf1a3b229-f2f4783f0f3729c5ce2e</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-auth.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>raise_bug</td>
+						</tr>
+						
+						<tr>
+							<td>Severity</td>
+							<td><span class="severity-badge severity-high">high</span></td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test fails due to a JavaScript console error that prevents the header from rendering. The console shows &#039;TypeError: Cannot read property of undefined&#039; which indicates an application bug preventing proper page rendering.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">Analysis of the trace reveals a critical JavaScript error in the console: &#039;TypeError: Cannot read property &#039;textContent&#039; of undefined at renderHeader (app.js:45)&#039;. This error occurs during page load and prevents the header component from rendering. The test correctly expects the header to be visible, but the application fails to render it due to this bug. The network requests complete successfully, but the JavaScript execution fails. This is an application bug that needs to be fixed.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--bugs-to-raise-0" class="copy-button" data-copy-text="Console error prevents header from rendering after login - TypeError in renderHeader function">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Console error prevents header from rendering after login - TypeError in renderHeader function</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--bugs-to-raise-0" class="copy-button" data-copy-markdown="# Test Failure: Console Error Prevents Header Rendering
+
+## Test Information
+- **Test Name**: verify welcome header displays after login
+- **Test Description**: This test attempts to verify the visibility of a header with the text &#039;Welcome to Our Store&#039; after login. The expected behavior is that the header should be visible.
+- **Test Code**:
+    await login(page);
+    await expect(page.getByRole(&#039;heading&#039;, { name: &#039;Welcome to Our Store&#039; })).toBeVisible();
+
+## Issue Description
+- The test fails because the heading &#039;Welcome to Our Store&#039; does not render on the page after login.
+- A JavaScript console error prevents the header component from rendering.
+- The failure occurs at the assertion toBeVisible with a 5000ms timeout.
+- Observed behavior: Element not found due to rendering failure.
+- Expected behavior: The header should be visible after successful login.
+
+## Potential Impact
+- **Affected Users**: All users attempting to view the page after login.
+- **Business Impact**: High - critical UI component not rendering.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: getByRole(&#039;heading&#039;, { name: &#039;Welcome to Our Store&#039; })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### Console Errors
+- **Critical Error**: TypeError: Cannot read property &#039;textContent&#039; of undefined
+  - Location: app.js:45 in renderHeader function
+  - Stack trace: renderHeader -&gt; updateDOM -&gt; initPage
+  - This error prevents the header component from rendering
+
+### Network Analysis
+- All network requests complete successfully (200 OK)
+- No API failures detected
+- Issue is purely client-side JavaScript error
+
+## Root Cause
+- The renderHeader function attempts to access a property on an undefined object
+- This occurs during page initialization after login
+- The error prevents the entire header component from rendering
+
+## Suggested Fix
+- Fix the JavaScript error in app.js:45 by adding null/undefined checks
+- Ensure the header data is properly initialized before rendering
+- Add error handling to prevent component rendering failures">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--bugs-to-raise-0" class="ticket-description-content" data-markdown="# Test Failure: Console Error Prevents Header Rendering
+
+## Test Information
+- **Test Name**: verify welcome header displays after login
+- **Test Description**: This test attempts to verify the visibility of a header with the text &#039;Welcome to Our Store&#039; after login. The expected behavior is that the header should be visible.
+- **Test Code**:
+    await login(page);
+    await expect(page.getByRole(&#039;heading&#039;, { name: &#039;Welcome to Our Store&#039; })).toBeVisible();
+
+## Issue Description
+- The test fails because the heading &#039;Welcome to Our Store&#039; does not render on the page after login.
+- A JavaScript console error prevents the header component from rendering.
+- The failure occurs at the assertion toBeVisible with a 5000ms timeout.
+- Observed behavior: Element not found due to rendering failure.
+- Expected behavior: The header should be visible after successful login.
+
+## Potential Impact
+- **Affected Users**: All users attempting to view the page after login.
+- **Business Impact**: High - critical UI component not rendering.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: getByRole(&#039;heading&#039;, { name: &#039;Welcome to Our Store&#039; })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### Console Errors
+- **Critical Error**: TypeError: Cannot read property &#039;textContent&#039; of undefined
+  - Location: app.js:45 in renderHeader function
+  - Stack trace: renderHeader -&gt; updateDOM -&gt; initPage
+  - This error prevents the header component from rendering
+
+### Network Analysis
+- All network requests complete successfully (200 OK)
+- No API failures detected
+- Issue is purely client-side JavaScript error
+
+## Root Cause
+- The renderHeader function attempts to access a property on an undefined object
+- This occurs during page initialization after login
+- The error prevents the entire header component from rendering
+
+## Suggested Fix
+- Fix the JavaScript error in app.js:45 by adding null/undefined checks
+- Ensure the header data is properly initialized before rendering
+- Add error handling to prevent component rendering failures"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+			<div class="test-item" id="test--bugs-to-raise-1">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🐞</span>
+						<span class="test-name">verify product catalog loads after login</span>
+						<span class="severity-badge severity-high">high</span>
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>c9ada33041fbf1a3b229-f26667731ace1474197f</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-auth.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>raise_bug</td>
+						</tr>
+						
+						<tr>
+							<td>Severity</td>
+							<td><span class="severity-badge severity-high">high</span></td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test fails because a network 404 error prevents products from loading. The API endpoint &#039;/api/products&#039; returns 404 Not Found, causing the product list to be empty. This is an application bug where the API endpoint is missing or incorrectly configured.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace analysis shows that the test expects 20 products but receives 0. Investigation reveals a network request to &#039;/api/products&#039; returns 404 Not Found. The console shows &#039;Failed to load resource: the server responded with a status of 404&#039; for the products API. The page renders correctly but the product list is empty because the API call fails. This is a backend API issue where the endpoint is missing, moved, or incorrectly configured. The test is correct - it should receive products, but the application cannot fetch them.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--bugs-to-raise-1" class="copy-button" data-copy-text="Network 404 error prevents products from loading - /api/products endpoint not found">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Network 404 error prevents products from loading - /api/products endpoint not found</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--bugs-to-raise-1" class="copy-button" data-copy-markdown="# Test Failure: Network 404 Error Prevents Products from Loading
+
+## Test Information
+- **Test Name**: verify product catalog loads after login
+- **Test Description**: Verifies the number of products displayed after login; expects 20 products
+- **Expected Behavior**: The test expects 20 products to be displayed after successful API call
+- **Test Code**:
+    await login(page);
+    const products = page.locator(&#039;.inventory_item&#039;);
+    const count = await products.count();
+    expect(count).toBe(20);
+
+## Issue Description
+- The test fails because it expects 20 products, but 0 products are displayed
+- A network 404 error prevents the products API from loading
+- The API endpoint &#039;/api/products&#039; returns 404 Not Found
+- The page renders correctly but the product list remains empty
+- The locator &#039;.inventory_item&#039; finds no elements because none are rendered
+
+## Potential Impact
+- **Affected Users**: All users attempting to view products after login
+- **Business Impact**: High - product catalog is completely unavailable
+
+## Artifacts
+
+### Playwright Error
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 20
+Received: 0
+
+### Network Errors
+- **404 Not Found**: GET https://example.com/api/products
+  - Status: 404
+  - Response: {&quot;error&quot;: &quot;Endpoint not found&quot;}
+  - This prevents products from loading
+  - All other API calls succeed (200 OK)
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 404 (Not Found) for /api/products
+- Uncaught (in promise) Error: Failed to fetch products
+
+### Network Analysis
+- Login API: 200 OK ✓
+- Products API: 404 Not Found ✗
+- User profile API: 200 OK ✓
+- Only the products endpoint is failing
+
+## Root Cause
+- The &#039;/api/products&#039; endpoint is missing or has been moved
+- Possible causes: API route misconfiguration, endpoint renamed, or backend deployment issue
+- The frontend correctly attempts to fetch products but the backend cannot serve the request
+
+## Suggested Fix
+- Verify the products API endpoint exists and is correctly configured
+- Check API routing configuration for &#039;/api/products&#039;
+- Ensure the endpoint is deployed and accessible
+- Add proper error handling and fallback UI for failed API calls">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--bugs-to-raise-1" class="ticket-description-content" data-markdown="# Test Failure: Network 404 Error Prevents Products from Loading
+
+## Test Information
+- **Test Name**: verify product catalog loads after login
+- **Test Description**: Verifies the number of products displayed after login; expects 20 products
+- **Expected Behavior**: The test expects 20 products to be displayed after successful API call
+- **Test Code**:
+    await login(page);
+    const products = page.locator(&#039;.inventory_item&#039;);
+    const count = await products.count();
+    expect(count).toBe(20);
+
+## Issue Description
+- The test fails because it expects 20 products, but 0 products are displayed
+- A network 404 error prevents the products API from loading
+- The API endpoint &#039;/api/products&#039; returns 404 Not Found
+- The page renders correctly but the product list remains empty
+- The locator &#039;.inventory_item&#039; finds no elements because none are rendered
+
+## Potential Impact
+- **Affected Users**: All users attempting to view products after login
+- **Business Impact**: High - product catalog is completely unavailable
+
+## Artifacts
+
+### Playwright Error
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 20
+Received: 0
+
+### Network Errors
+- **404 Not Found**: GET https://example.com/api/products
+  - Status: 404
+  - Response: {&quot;error&quot;: &quot;Endpoint not found&quot;}
+  - This prevents products from loading
+  - All other API calls succeed (200 OK)
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 404 (Not Found) for /api/products
+- Uncaught (in promise) Error: Failed to fetch products
+
+### Network Analysis
+- Login API: 200 OK ✓
+- Products API: 404 Not Found ✗
+- User profile API: 200 OK ✓
+- Only the products endpoint is failing
+
+## Root Cause
+- The &#039;/api/products&#039; endpoint is missing or has been moved
+- Possible causes: API route misconfiguration, endpoint renamed, or backend deployment issue
+- The frontend correctly attempts to fetch products but the backend cannot serve the request
+
+## Suggested Fix
+- Verify the products API endpoint exists and is correctly configured
+- Check API routing configuration for &#039;/api/products&#039;
+- Ensure the endpoint is deployed and accessible
+- Add proper error handling and fallback UI for failed API calls"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+			<div class="test-item" id="test--bugs-to-raise-2">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🐞</span>
+						<span class="test-name">verify checkout button is enabled with items in cart</span>
+						<span class="severity-badge severity-medium">medium</span>
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>34b70c26e5f779e50be5-cb6701037a8c7813206f</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-cart.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>raise_bug</td>
+						</tr>
+						
+						<tr>
+							<td>Severity</td>
+							<td><span class="severity-badge severity-medium">medium</span></td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test fails because the checkout button is disabled when it should be enabled. The button exists on the page but has the &#039;disabled&#039; attribute set, preventing user interaction. This is an application bug where the button state logic is incorrect.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace shows the checkout button is present in the DOM with text &#039;Checkout&#039;, but it has the &#039;disabled&#039; attribute set. The test attempts to click the button but fails because Playwright cannot interact with disabled elements. Analysis of the button&#039;s state shows it should be enabled when the cart has items (which it does - 2 items present). The disabled state appears to be incorrectly set, possibly due to a validation logic error or missing state update. This prevents users from proceeding to checkout even when they have items in their cart.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--bugs-to-raise-2" class="copy-button" data-copy-text="Checkout button incorrectly disabled when cart has items - prevents users from proceeding">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Checkout button incorrectly disabled when cart has items - prevents users from proceeding</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--bugs-to-raise-2" class="copy-button" data-copy-markdown="# Test Failure: Checkout Button Disabled When It Should Be Enabled
+
+## Test Information
+- **Test Name**: verify checkout button is enabled with items in cart
+- **Test Description**: Verifies that after login and adding items to cart, the checkout button is clickable.
+- **Expected Behavior**: The checkout button should be enabled and clickable when cart has items.
+- **Test Code**:
+    await login(page);
+    await page.locator(&#039;.shopping_cart_link&#039;).click();
+    await page.waitForURL(&#039;**/cart.html&#039;);
+    await expect(page.getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; })).toBeEnabled();
+    await page.getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; }).click();
+
+## Issue Description
+- The test fails because the checkout button is disabled when it should be enabled.
+- The button exists on the page with correct text &#039;Checkout&#039;.
+- The button has the &#039;disabled&#039; attribute set, preventing clicks.
+- The cart contains 2 items, so the button should be enabled.
+- The Playwright error indicates the button is not clickable due to disabled state.
+
+## Potential Impact
+- **Affected Users**: All users with items in their cart cannot proceed to checkout.
+- **Business Impact**: Medium - blocks checkout flow and prevents purchases.
+
+## Artifacts
+
+### Playwright Error
+Error: element is not enabled
+Locator: getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; })
+Action: click()
+The button has the &#039;disabled&#039; attribute set
+
+### DOM Analysis
+- Button element: `&lt;button id=&quot;checkout&quot; disabled&gt;Checkout&lt;/button&gt;`
+- Button should be: `&lt;button id=&quot;checkout&quot;&gt;Checkout&lt;/button&gt;` (without disabled)
+- Cart state: 2 items present
+- Button state logic appears incorrect
+
+### Console Analysis
+- No JavaScript errors detected
+- Button click handlers are registered
+- Issue is with button state management
+
+## Root Cause
+- The button&#039;s disabled state is not being updated correctly when items are added to cart
+- Possible causes: missing state update, incorrect validation logic, or race condition in state management
+- The button remains disabled even when cart validation should enable it
+
+## Suggested Fix
+- Review the button state management logic in the cart component
+- Ensure the button&#039;s disabled attribute is removed when cart has items
+- Check for race conditions in state updates
+- Add proper state validation before setting disabled attribute">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--bugs-to-raise-2" class="ticket-description-content" data-markdown="# Test Failure: Checkout Button Disabled When It Should Be Enabled
+
+## Test Information
+- **Test Name**: verify checkout button is enabled with items in cart
+- **Test Description**: Verifies that after login and adding items to cart, the checkout button is clickable.
+- **Expected Behavior**: The checkout button should be enabled and clickable when cart has items.
+- **Test Code**:
+    await login(page);
+    await page.locator(&#039;.shopping_cart_link&#039;).click();
+    await page.waitForURL(&#039;**/cart.html&#039;);
+    await expect(page.getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; })).toBeEnabled();
+    await page.getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; }).click();
+
+## Issue Description
+- The test fails because the checkout button is disabled when it should be enabled.
+- The button exists on the page with correct text &#039;Checkout&#039;.
+- The button has the &#039;disabled&#039; attribute set, preventing clicks.
+- The cart contains 2 items, so the button should be enabled.
+- The Playwright error indicates the button is not clickable due to disabled state.
+
+## Potential Impact
+- **Affected Users**: All users with items in their cart cannot proceed to checkout.
+- **Business Impact**: Medium - blocks checkout flow and prevents purchases.
+
+## Artifacts
+
+### Playwright Error
+Error: element is not enabled
+Locator: getByRole(&#039;button&#039;, { name: &#039;Checkout&#039; })
+Action: click()
+The button has the &#039;disabled&#039; attribute set
+
+### DOM Analysis
+- Button element: `&lt;button id=&quot;checkout&quot; disabled&gt;Checkout&lt;/button&gt;`
+- Button should be: `&lt;button id=&quot;checkout&quot;&gt;Checkout&lt;/button&gt;` (without disabled)
+- Cart state: 2 items present
+- Button state logic appears incorrect
+
+### Console Analysis
+- No JavaScript errors detected
+- Button click handlers are registered
+- Issue is with button state management
+
+## Root Cause
+- The button&#039;s disabled state is not being updated correctly when items are added to cart
+- Possible causes: missing state update, incorrect validation logic, or race condition in state management
+- The button remains disabled even when cart validation should enable it
+
+## Suggested Fix
+- Review the button state management logic in the cart component
+- Ensure the button&#039;s disabled attribute is removed when cart has items
+- Check for race conditions in state updates
+- Add proper state validation before setting disabled attribute"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+		</div>
+	
+		<div class="section-header ">
+			<div class="section-title">
+				<span>🔧 Tests to Modify</span>
+				<span style="font-weight: normal; color: #666;">(4)</span>
+			</div>
+			<span class="expand-icon">▼</span>
+		</div>
+		<div class="section-content">
+			
+			<div class="test-item" id="test--tests-to-modify-0">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🔧</span>
+						<span class="test-name">verify page heading is visible</span>
+						
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>a30a6eba6312f6b87ea5-b0bf17ac2d687113a3ee</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>example.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>modify_test</td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test expects a heading that does not exist on the page, causing the locator to fail. This is a test code issue, not an application bug. The test should be modified to expect an existing heading or correct the expectation.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">Analysis of the trace shows that the test is looking for a heading with text &#039;This heading does not exist&#039; which is not present in the DOM. The page loads successfully, but the expected element is missing. The screenshot confirms the page rendered correctly with other headings visible. This is clearly a test code issue where the selector or expected text needs to be updated to match actual page content. No console errors or network issues indicate application problems.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--tests-to-modify-0" class="copy-button" data-copy-text="Test fails due to expecting non-existent heading &#039;This heading does not exist&#039; on playwright.dev page">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Test fails due to expecting non-existent heading &#039;This heading does not exist&#039; on playwright.dev page</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--tests-to-modify-0" class="copy-button" data-copy-markdown="# Test Failure: verify page heading is visible
+
+## Test Information
+- Test Name: verify page heading is visible
+- Test Description: Navigates to playwright.dev and expects a heading with text &#039;This heading does not exist&#039; to be visible
+- Expected Behavior: The specified heading should be visible on the page
+- Test Code:
+    await page.goto(&#039;https://playwright.dev/&#039;);
+    await expect(page.getByRole(&#039;heading&#039;, { name: &#039;This heading does not exist&#039; })).toBeVisible();
+
+## Issue Description
+- The test fails because the heading &#039;This heading does not exist&#039; is not present on the page
+- The failure occurs at the expectation toBeVisible with a 5000ms timeout
+- Observed behavior: Locator could not find the element
+- Expected behavior: The heading should be visible
+
+## Potential Impact
+- Affects test reliability only
+- No impact on application functionality or users
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible() failed
+Locator: getByRole(&#039;heading&#039;, { name: &#039;This heading does not exist&#039; })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+## Suggested Test Fix
+- Modify the test to expect an existing heading on the page, for example, change the heading text to &#039;Playwright enables reliable end-to-end testing for modern web apps.&#039; or another visible heading
+- Alternatively, update the test logic to match actual page content
+- This will prevent the test from failing due to non-existent elements">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--tests-to-modify-0" class="ticket-description-content" data-markdown="# Test Failure: verify page heading is visible
+
+## Test Information
+- Test Name: verify page heading is visible
+- Test Description: Navigates to playwright.dev and expects a heading with text &#039;This heading does not exist&#039; to be visible
+- Expected Behavior: The specified heading should be visible on the page
+- Test Code:
+    await page.goto(&#039;https://playwright.dev/&#039;);
+    await expect(page.getByRole(&#039;heading&#039;, { name: &#039;This heading does not exist&#039; })).toBeVisible();
+
+## Issue Description
+- The test fails because the heading &#039;This heading does not exist&#039; is not present on the page
+- The failure occurs at the expectation toBeVisible with a 5000ms timeout
+- Observed behavior: Locator could not find the element
+- Expected behavior: The heading should be visible
+
+## Potential Impact
+- Affects test reliability only
+- No impact on application functionality or users
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible() failed
+Locator: getByRole(&#039;heading&#039;, { name: &#039;This heading does not exist&#039; })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+## Suggested Test Fix
+- Modify the test to expect an existing heading on the page, for example, change the heading text to &#039;Playwright enables reliable end-to-end testing for modern web apps.&#039; or another visible heading
+- Alternatively, update the test logic to match actual page content
+- This will prevent the test from failing due to non-existent elements"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+			<div class="test-item" id="test--tests-to-modify-1">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🔧</span>
+						<span class="test-name">verify main page heading visibility</span>
+						
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>a30a6eba6312f6b87ea5-27e48e8976500c5803ab</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>example.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>modify_test</td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test uses a selector that no longer matches the page structure. The CSS class &#039;.hero-title&#039; was changed to &#039;.page-hero-title&#039; in a recent product update. This is a changed selector issue requiring test update.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace analysis reveals that the test is using a CSS selector &#039;.hero-title&#039; which was changed in the application&#039;s recent UI update. The DOM inspection shows the heading now uses &#039;.page-hero-title&#039; instead. The page loads correctly and the heading is visible, but the test selector is outdated. This is a product change that requires test maintenance. The screenshot shows the heading is present with the new class name.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--tests-to-modify-1" class="copy-button" data-copy-text="Test fails due to changed CSS selector after product UI update - selector needs update">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Test fails due to changed CSS selector after product UI update - selector needs update</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--tests-to-modify-1" class="copy-button" data-copy-markdown="# Test Failure: Changed Selector After Product Update
+
+## Test Information
+- **Test Name**: verify main page heading visibility
+- **Test Description**: The test navigates to &#039;https://playwright.dev/&#039; and expects a heading with the old CSS class selector to be visible.
+- **Expected Behavior**: The heading should be visible using the selector &#039;.hero-title&#039;.
+- **Test Code**:
+    await page.goto(&#039;https://playwright.dev/&#039;);
+    await expect(page.locator(&#039;.hero-title&#039;)).toBeVisible();
+
+## Issue Description
+- The test fails because the CSS class selector &#039;.hero-title&#039; no longer exists in the DOM.
+- The application was updated and now uses &#039;.page-hero-title&#039; for the heading element.
+- The heading is still present on the page, but with a different class name.
+- The locator times out after 5000ms waiting for the element with the old selector.
+
+## Potential Impact
+- **Affected Users**: None, this is a test maintenance issue.
+- **Business Impact**: Low, the application works correctly but tests need updating.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: locator(&#039;.hero-title&#039;)
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### DOM Analysis
+- Old selector: &#039;.hero-title&#039; (not found)
+- New selector: &#039;.page-hero-title&#039; (found, element visible)
+
+## Suggested Test Fix
+- Update the test selector from &#039;.hero-title&#039; to &#039;.page-hero-title&#039;:
+    await expect(page.locator(&#039;.page-hero-title&#039;)).toBeVisible();
+- Or use a more stable selector like getByRole(&#039;heading&#039;, { name: &#039;...&#039; }) to avoid future breakage from CSS class changes.">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--tests-to-modify-1" class="ticket-description-content" data-markdown="# Test Failure: Changed Selector After Product Update
+
+## Test Information
+- **Test Name**: verify main page heading visibility
+- **Test Description**: The test navigates to &#039;https://playwright.dev/&#039; and expects a heading with the old CSS class selector to be visible.
+- **Expected Behavior**: The heading should be visible using the selector &#039;.hero-title&#039;.
+- **Test Code**:
+    await page.goto(&#039;https://playwright.dev/&#039;);
+    await expect(page.locator(&#039;.hero-title&#039;)).toBeVisible();
+
+## Issue Description
+- The test fails because the CSS class selector &#039;.hero-title&#039; no longer exists in the DOM.
+- The application was updated and now uses &#039;.page-hero-title&#039; for the heading element.
+- The heading is still present on the page, but with a different class name.
+- The locator times out after 5000ms waiting for the element with the old selector.
+
+## Potential Impact
+- **Affected Users**: None, this is a test maintenance issue.
+- **Business Impact**: Low, the application works correctly but tests need updating.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: locator(&#039;.hero-title&#039;)
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### DOM Analysis
+- Old selector: &#039;.hero-title&#039; (not found)
+- New selector: &#039;.page-hero-title&#039; (found, element visible)
+
+## Suggested Test Fix
+- Update the test selector from &#039;.hero-title&#039; to &#039;.page-hero-title&#039;:
+    await expect(page.locator(&#039;.page-hero-title&#039;)).toBeVisible();
+- Or use a more stable selector like getByRole(&#039;heading&#039;, { name: &#039;...&#039; }) to avoid future breakage from CSS class changes."></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+			<div class="test-item" id="test--tests-to-modify-2">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🔧</span>
+						<span class="test-name">verify cart badge count after adding product</span>
+						
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>34b70c26e5f779e50be5-ac3485c12e7bce76afca</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-cart.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>modify_test</td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test fails because the product behavior changed - products now have a quantity selector allowing multiple units to be added at once. The test expects badge count &#039;1&#039; but receives &#039;3&#039; because the default quantity is now 3. This is a product change requiring test update.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace analysis reveals that the product page was updated with a new feature: quantity selector. When a user clicks &#039;Add to Cart&#039;, the product is now added with a default quantity of 3 units instead of 1. The test correctly adds one product, but the cart badge shows &#039;3&#039; because the product was added with quantity 3. The application behavior changed, and the test needs to be updated to reflect the new default quantity behavior. Alternatively, the test could set the quantity to 1 before adding to cart.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--tests-to-modify-2" class="copy-button" data-copy-text="Test fails due to product change - quantity selector now adds 3 units by default instead of 1">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Test fails due to product change - quantity selector now adds 3 units by default instead of 1</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--tests-to-modify-2" class="copy-button" data-copy-markdown="# Test Failure: Product Change - Quantity Selector Affects Cart Count
+
+## Test Information
+- **Test Name**: verify cart badge count after adding product
+- **Test Description**: Verifies that after login and adding the first product to the cart, the cart badge shows the correct count of items.
+- **Expected Behavior**: The cart badge should display &#039;1&#039; after adding one product (old behavior).
+- **Test Code**:
+    await login(page);
+    const firstProduct = page.locator(&#039;.inventory_item&#039;).first();
+    await firstProduct.locator(&#039;button&#039;).first().click();
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;1&#039;);
+
+## Issue Description
+- The test fails because it expects the cart badge to show &#039;1&#039; after adding one product.
+- The actual cart badge count is &#039;3&#039;, which reflects the new product behavior.
+- A product change introduced a quantity selector with default value of 3.
+- When clicking &#039;Add to Cart&#039;, the product is now added with quantity 3 by default.
+- The test was written for the old behavior where each click added 1 unit.
+
+## Potential Impact
+- **Affected Users**: None, this is a test maintenance issue.
+- **Business Impact**: Low, the application works correctly but tests need updating.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toHaveText(expected) failed
+Locator: locator(&#039;.shopping_cart_badge&#039;)
+Expected: &quot;1&quot;
+Received: &quot;3&quot;
+Timeout: 5000ms
+
+### Product Change Details
+- **New Feature**: Quantity selector added to product cards
+- **Default Quantity**: 3 units (previously 1 unit)
+- **UI Change**: Products now show quantity input field before &#039;Add to Cart&#039; button
+- **Behavior Change**: Single click now adds 3 units instead of 1
+
+### DOM Analysis
+- Old behavior: `&lt;button&gt;Add to Cart&lt;/button&gt;` (adds 1 unit)
+- New behavior: `&lt;input type=&quot;number&quot; value=&quot;3&quot;&gt;&lt;button&gt;Add to Cart&lt;/button&gt;` (adds 3 units)
+- Cart badge correctly shows &#039;3&#039; after adding product with default quantity
+
+## Root Cause
+- Product feature update changed the default add-to-cart behavior
+- Tests were not updated to reflect the new quantity selector feature
+- The test assumes old behavior where each product addition increments by 1
+
+## Suggested Test Fix
+- **Option 1**: Update test to expect the new default quantity:
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;3&#039;);
+- **Option 2**: Set quantity to 1 before adding to cart:
+    await firstProduct.locator(&#039;input[type=&quot;number&quot;]&#039;).fill(&#039;1&#039;);
+    await firstProduct.locator(&#039;button&#039;).first().click();
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;1&#039;);
+- **Option 3**: Use the quantity selector in the test to explicitly set the quantity">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--tests-to-modify-2" class="ticket-description-content" data-markdown="# Test Failure: Product Change - Quantity Selector Affects Cart Count
+
+## Test Information
+- **Test Name**: verify cart badge count after adding product
+- **Test Description**: Verifies that after login and adding the first product to the cart, the cart badge shows the correct count of items.
+- **Expected Behavior**: The cart badge should display &#039;1&#039; after adding one product (old behavior).
+- **Test Code**:
+    await login(page);
+    const firstProduct = page.locator(&#039;.inventory_item&#039;).first();
+    await firstProduct.locator(&#039;button&#039;).first().click();
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;1&#039;);
+
+## Issue Description
+- The test fails because it expects the cart badge to show &#039;1&#039; after adding one product.
+- The actual cart badge count is &#039;3&#039;, which reflects the new product behavior.
+- A product change introduced a quantity selector with default value of 3.
+- When clicking &#039;Add to Cart&#039;, the product is now added with quantity 3 by default.
+- The test was written for the old behavior where each click added 1 unit.
+
+## Potential Impact
+- **Affected Users**: None, this is a test maintenance issue.
+- **Business Impact**: Low, the application works correctly but tests need updating.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toHaveText(expected) failed
+Locator: locator(&#039;.shopping_cart_badge&#039;)
+Expected: &quot;1&quot;
+Received: &quot;3&quot;
+Timeout: 5000ms
+
+### Product Change Details
+- **New Feature**: Quantity selector added to product cards
+- **Default Quantity**: 3 units (previously 1 unit)
+- **UI Change**: Products now show quantity input field before &#039;Add to Cart&#039; button
+- **Behavior Change**: Single click now adds 3 units instead of 1
+
+### DOM Analysis
+- Old behavior: `&lt;button&gt;Add to Cart&lt;/button&gt;` (adds 1 unit)
+- New behavior: `&lt;input type=&quot;number&quot; value=&quot;3&quot;&gt;&lt;button&gt;Add to Cart&lt;/button&gt;` (adds 3 units)
+- Cart badge correctly shows &#039;3&#039; after adding product with default quantity
+
+## Root Cause
+- Product feature update changed the default add-to-cart behavior
+- Tests were not updated to reflect the new quantity selector feature
+- The test assumes old behavior where each product addition increments by 1
+
+## Suggested Test Fix
+- **Option 1**: Update test to expect the new default quantity:
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;3&#039;);
+- **Option 2**: Set quantity to 1 before adding to cart:
+    await firstProduct.locator(&#039;input[type=&quot;number&quot;]&#039;).fill(&#039;1&#039;);
+    await firstProduct.locator(&#039;button&#039;).first().click();
+    await expect(page.locator(&#039;.shopping_cart_badge&#039;)).toHaveText(&#039;1&#039;);
+- **Option 3**: Use the quantity selector in the test to explicitly set the quantity"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+			<div class="test-item" id="test--tests-to-modify-3">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🔧</span>
+						<span class="test-name">verify product sorting options are available</span>
+						
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>0ce3b61a8613c9d2af18-7b974eb5b493af413096</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-products.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>modify_test</td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test expects a sorting option text that does not exist in the application, causing the failure. This is a test logic error and should be fixed by updating the expected text or test logic.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace analysis shows the test is checking for a sorting option &#039;Price: High to Low to Medium&#039; which doesn&#039;t exist. The actual sorting options are: &#039;Name (A to Z)&#039;, &#039;Name (Z to A)&#039;, &#039;Price (low to high)&#039;, and &#039;Price (high to low)&#039;. The test was likely written with incorrect expected text. The application&#039;s sorting functionality works correctly - all valid options are present. This is purely a test data/expectation issue that needs correction.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--tests-to-modify-3" class="copy-button" data-copy-text="Test fails due to incorrect expected sorting option text in &#039;verify product sorting options are available&#039;">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Test fails due to incorrect expected sorting option text in &#039;verify product sorting options are available&#039;</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--tests-to-modify-3" class="copy-button" data-copy-markdown="# Test Failure: Incorrect Sorting Option Verification
+
+## Test Information
+- **Test Name**: verify product sorting options are available
+- **Test Description**: Verifies that a non-existent sorting option &#039;Price: High to Low to Medium&#039; is present after login
+- **Expected Behavior**: The select element with class &#039;product_sort_container&#039; should contain the text &#039;Price: High to Low to Medium&#039;
+- **Test Code**:
+    await login(page);
+    await expect(page.locator(&#039;select.product_sort_container&#039;)).toContainText(&#039;Price: High to Low to Medium&#039;);
+
+## Issue Description
+- The test fails because the expected sorting option text does not exist in the application.
+- Actual text found: &#039;Name (A to Z)Name (Z to A)Price (low to high)Price (high to low)&#039;
+- The test is intentionally checking for an incorrect sorting option, leading to failure.
+
+## Potential Impact
+- **Affected Users**: None (test issue only)
+- **Business Impact**: Low - test needs correction to reflect actual application behavior
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toContainText(expected) failed
+Locator: locator(&#039;select.product_sort_container&#039;)
+Expected substring: &quot;Price: High to Low to Medium&quot;
+Received string: &quot;Name (A to Z)Name (Z to A)Price (low to high)Price (high to low)&quot;
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 401 (Unauthorized) for analytics endpoints (not impacting test)
+
+### Network Errors
+- POST https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&amp;token=TOKEN - 401 Unauthorized
+- POST https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&amp;token=TOKEN - 401 Unauthorized
+
+## Suggested Test Fix
+- Update the expected text in the test to match one of the actual sorting options, e.g., &#039;Price (high to low)&#039;
+- Or adjust the test logic to verify valid sorting options present in the application
+- Remove or correct the incorrect expected substring to prevent test failure">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--tests-to-modify-3" class="ticket-description-content" data-markdown="# Test Failure: Incorrect Sorting Option Verification
+
+## Test Information
+- **Test Name**: verify product sorting options are available
+- **Test Description**: Verifies that a non-existent sorting option &#039;Price: High to Low to Medium&#039; is present after login
+- **Expected Behavior**: The select element with class &#039;product_sort_container&#039; should contain the text &#039;Price: High to Low to Medium&#039;
+- **Test Code**:
+    await login(page);
+    await expect(page.locator(&#039;select.product_sort_container&#039;)).toContainText(&#039;Price: High to Low to Medium&#039;);
+
+## Issue Description
+- The test fails because the expected sorting option text does not exist in the application.
+- Actual text found: &#039;Name (A to Z)Name (Z to A)Price (low to high)Price (high to low)&#039;
+- The test is intentionally checking for an incorrect sorting option, leading to failure.
+
+## Potential Impact
+- **Affected Users**: None (test issue only)
+- **Business Impact**: Low - test needs correction to reflect actual application behavior
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toContainText(expected) failed
+Locator: locator(&#039;select.product_sort_container&#039;)
+Expected substring: &quot;Price: High to Low to Medium&quot;
+Received string: &quot;Name (A to Z)Name (Z to A)Price (low to high)Price (high to low)&quot;
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 401 (Unauthorized) for analytics endpoints (not impacting test)
+
+### Network Errors
+- POST https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&amp;token=TOKEN - 401 Unauthorized
+- POST https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&amp;token=TOKEN - 401 Unauthorized
+
+## Suggested Test Fix
+- Update the expected text in the test to match one of the actual sorting options, e.g., &#039;Price (high to low)&#039;
+- Or adjust the test logic to verify valid sorting options present in the application
+- Remove or correct the incorrect expected substring to prevent test failure"></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+		</div>
+	
+		<div class="section-header ">
+			<div class="section-title">
+				<span>🔄 Run Again</span>
+				<span style="font-weight: normal; color: #666;">(1)</span>
+			</div>
+			<span class="expand-icon">▼</span>
+		</div>
+		<div class="section-content">
+			
+			<div class="test-item" id="test--run-again-0">
+				<div class="test-header">
+					<div class="test-header-left">
+						<span class="action-icon">🔄</span>
+						<span class="test-name">verify featured product is displayed</span>
+						
+					</div>
+					<span class="expand-icon">▼</span>
+				</div>
+				<div class="test-details">
+					<table class="details-table">
+						<tr>
+							<td>ID</td>
+							<td>0ce3b61a8613c9d2af18-79b8b3381827cf1cd46a</td>
+						</tr>
+						<tr>
+							<td>Test File</td>
+							<td>saucedemo-products.spec.ts</td>
+						</tr>
+						<tr>
+							<td>Test Status</td>
+							<td>unexpected</td>
+						</tr>
+						<tr>
+							<td>Action</td>
+							<td>run_again</td>
+						</tr>
+						
+						<tr>
+							<td>Rationale</td>
+							<td>The test fails because it checks for a product that does not exist, which is expected behavior. This is a test logic issue, not an application bug or transient failure. The test should be modified to check for existing products or handle the expected failure properly.</td>
+						</tr>
+						<tr>
+							<td>Detailed Reasoning</td>
+							<td class="detailed-reasoning">The trace shows the test is checking for a product name &#039;Super Awesome Product XYZ&#039; that was never part of the product catalog. The page loads successfully, products are displayed correctly, but the specific product name doesn&#039;t exist. This appears to be a test that was written with placeholder data or a product that was removed. The test should be updated to check for actual product names from the catalog. No application errors detected - the page functions correctly.</td>
+						</tr>
+					</table>
+					
+		<div class="ticket-details-section">
+			<div class="ticket-details-header">
+				<span>Ticket Details</span>
+				<span class="expand-icon">+</span>
+			</div>
+			<div class="ticket-details-content">
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Summary</span>
+				<button id="copy-summary--run-again-0" class="copy-button" data-copy-text="Test fails: Non-existent product name check fails as expected, test needs modification">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div class="ticket-summary-content">Test fails: Non-existent product name check fails as expected, test needs modification</div>
+			</div>
+		</div>
+			<div class="ticket-field">
+			<div class="ticket-field-header">
+				<span class="ticket-field-label">Description</span>
+				<button id="copy-description--run-again-0" class="copy-button" data-copy-markdown="# Test Failure: Verify Non-Existent Product Name After Login
+
+## Test Information
+- **Test Name**: verify featured product is displayed
+- **Test Description**: This test attempts to verify that a product named &#039;Super Awesome Product XYZ&#039; is visible after login. The expected behavior is that the product should be visible on the products page.
+- **Test Code**:
+    await login(page);
+    await expect(page.getByText(&#039;Super Awesome Product XYZ&#039;)).toBeVisible();
+
+## Issue Description
+- The test fails because the product &#039;Super Awesome Product XYZ&#039; does not exist on the products page.
+- The failure occurs at the assertion checking visibility of the non-existent product text.
+- This is expected behavior since the product is not part of the product list.
+
+## Potential Impact
+- **Affected Users**: None, this is a test issue only.
+- **Business Impact**: Low, no impact on application functionality.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: getByText(&#039;Super Awesome Product XYZ&#039;)
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 401 (Unauthorized) for external event tracking URLs. These do not affect the product page or test outcome.
+
+### Network Errors
+- POST requests to https://events.backtrace.io/api/unique-events/submit and /summed-events/submit returned 401 Unauthorized. These are unrelated to the product page functionality.
+
+## Suggested Test Fix
+- Modify the test to check for existing product names if the goal is to verify product visibility.
+- If the test is intentionally verifying failure for a non-existent product, mark it accordingly to avoid false failure reports in CI.
+- Alternatively, remove or adjust the test to align with valid product data.">
+					Copy
+				</button>
+			</div>
+			<div class="ticket-field-content">
+				<div id="ticket-description--run-again-0" class="ticket-description-content" data-markdown="# Test Failure: Verify Non-Existent Product Name After Login
+
+## Test Information
+- **Test Name**: verify featured product is displayed
+- **Test Description**: This test attempts to verify that a product named &#039;Super Awesome Product XYZ&#039; is visible after login. The expected behavior is that the product should be visible on the products page.
+- **Test Code**:
+    await login(page);
+    await expect(page.getByText(&#039;Super Awesome Product XYZ&#039;)).toBeVisible();
+
+## Issue Description
+- The test fails because the product &#039;Super Awesome Product XYZ&#039; does not exist on the products page.
+- The failure occurs at the assertion checking visibility of the non-existent product text.
+- This is expected behavior since the product is not part of the product list.
+
+## Potential Impact
+- **Affected Users**: None, this is a test issue only.
+- **Business Impact**: Low, no impact on application functionality.
+
+## Artifacts
+
+### Playwright Error
+Error: expect(locator).toBeVisible failed
+Locator: getByText(&#039;Super Awesome Product XYZ&#039;)
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+### Console Errors
+- Failed to load resource: the server responded with a status of 401 (Unauthorized) for external event tracking URLs. These do not affect the product page or test outcome.
+
+### Network Errors
+- POST requests to https://events.backtrace.io/api/unique-events/submit and /summed-events/submit returned 401 Unauthorized. These are unrelated to the product page functionality.
+
+## Suggested Test Fix
+- Modify the test to check for existing product names if the goal is to verify product visibility.
+- If the test is intentionally verifying failure for a non-existent product, mark it accordingly to avoid false failure reports in CI.
+- Alternatively, remove or adjust the test to align with valid product data."></div>
+			</div>
+		</div>
+			</div>
+		</div>
+	
+				</div>
+			</div>
+		
+		</div>
+	
+		</div>
+		
+		<div id="skipped-tests" class="tab-content">
+			
+		<table class="skipped-table">
+			<thead>
+				<tr>
+					<th>Test Name</th>
+					<th>ID</th>
+					<th>Reason</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+		<tr>
+			<td>verify main page heading visibility</td>
+			<td>a30a6eba6312f6b87ea5-27e48e8976500c5803ab</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify page heading is visible</td>
+			<td>a30a6eba6312f6b87ea5-b0bf17ac2d687113a3ee</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify main page heading visibility</td>
+			<td>a30a6eba6312f6b87ea5-4a09233c3795b250a6d1</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify main page heading visibility</td>
+			<td>a30a6eba6312f6b87ea5-4a09233c3795b250a6d1</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify page heading is visible</td>
+			<td>a30a6eba6312f6b87ea5-f206ad8479557b08a228</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify page heading is visible</td>
+			<td>a30a6eba6312f6b87ea5-f206ad8479557b08a228</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify welcome header displays after login</td>
+			<td>c9ada33041fbf1a3b229-f2f4783f0f3729c5ce2e</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product catalog loads after login</td>
+			<td>c9ada33041fbf1a3b229-f26667731ace1474197f</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify welcome header displays after login</td>
+			<td>c9ada33041fbf1a3b229-2e76ee09f5b132545649</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify welcome header displays after login</td>
+			<td>c9ada33041fbf1a3b229-2e76ee09f5b132545649</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product catalog loads after login</td>
+			<td>c9ada33041fbf1a3b229-cc059907157070962e09</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product catalog loads after login</td>
+			<td>c9ada33041fbf1a3b229-cc059907157070962e09</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify cart badge count after adding product</td>
+			<td>34b70c26e5f779e50be5-ac3485c12e7bce76afca</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify checkout button is enabled with items in cart</td>
+			<td>34b70c26e5f779e50be5-cb6701037a8c7813206f</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify cart badge count after adding product</td>
+			<td>34b70c26e5f779e50be5-2486b423254ed8c940ce</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify cart badge count after adding product</td>
+			<td>34b70c26e5f779e50be5-2486b423254ed8c940ce</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify checkout button is enabled with items in cart</td>
+			<td>34b70c26e5f779e50be5-350b72e8d7e72232894b</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify checkout button is enabled with items in cart</td>
+			<td>34b70c26e5f779e50be5-350b72e8d7e72232894b</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify featured product is displayed</td>
+			<td>0ce3b61a8613c9d2af18-79b8b3381827cf1cd46a</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product sorting options are available</td>
+			<td>0ce3b61a8613c9d2af18-7b974eb5b493af413096</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify featured product is displayed</td>
+			<td>0ce3b61a8613c9d2af18-01eef252bff6815cb765</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify featured product is displayed</td>
+			<td>0ce3b61a8613c9d2af18-01eef252bff6815cb765</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product sorting options are available</td>
+			<td>0ce3b61a8613c9d2af18-0f9db63ee070e3143cf8</td>
+			<td>duplicate failure from another project (chromium)</td>
+		</tr>
+	
+		<tr>
+			<td>verify product sorting options are available</td>
+			<td>0ce3b61a8613c9d2af18-0f9db63ee070e3143cf8</td>
+			<td>duplicate failure from multiple retries (retry 1)</td>
+		</tr>
+	
+			</tbody>
+		</table>
+	
+		</div>
+	</div>
+	
+	<script>
+		function switchTab(tabName, evt) {
+			evt = evt || window.event;
+			// Hide all tab contents
+			document.querySelectorAll('.tab-content').forEach(content => {
+				content.classList.remove('active');
+			});
+			
+			// Remove active class from all tabs
+			document.querySelectorAll('.tab').forEach(tab => {
+				tab.classList.remove('active');
+			});
+			
+			// Show selected tab content
+			const targetContent = document.getElementById(tabName);
+			if (targetContent) {
+				targetContent.classList.add('active');
+			}
+			
+			// Add active class to clicked tab
+			let clickedTab = null;
+			if (evt) {
+				clickedTab = evt.target || evt.currentTarget;
+			}
+			
+			if (clickedTab && clickedTab.classList && clickedTab.classList.contains('tab')) {
+				clickedTab.classList.add('active');
+			} else {
+				// Fallback: find the button that matches the tab name
+				document.querySelectorAll('.tab').forEach(btn => {
+					if (tabName === 'triage-results' && btn.textContent.includes('Triage Results')) {
+						btn.classList.add('active');
+					} else if (tabName === 'skipped-tests' && btn.textContent.includes('Skipped Tests')) {
+						btn.classList.add('active');
+					}
+				});
+			}
+		}
+		
+		function toggleTestDetails(element) {
+			const testItem = element.closest('.test-item');
+			testItem.classList.toggle('expanded');
+		}
+		
+		function toggleSection(element) {
+			const sectionHeader = element.closest('.section-header');
+			sectionHeader.classList.toggle('expanded');
+		}
+		
+		function toggleTicketDetails(element) {
+			const header = element.closest('.ticket-details-header');
+			header.classList.toggle('expanded');
+		}
+		
+		async function copyToClipboard(text, button) {
+			try {
+				await navigator.clipboard.writeText(text);
+				const originalText = button.textContent.trim();
+				button.textContent = 'Copied!';
+				button.classList.add('copied');
+				setTimeout(() => {
+					button.textContent = originalText;
+					button.classList.remove('copied');
+				}, 2000);
+			} catch (err) {
+				console.error('Failed to copy:', err);
+				// Fallback for older browsers
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				textarea.style.position = 'fixed';
+				textarea.style.opacity = '0';
+				document.body.appendChild(textarea);
+				textarea.select();
+				try {
+					document.execCommand('copy');
+					const originalText = button.textContent.trim();
+					button.textContent = 'Copied!';
+					button.classList.add('copied');
+					setTimeout(() => {
+						button.textContent = originalText;
+						button.classList.remove('copied');
+					}, 2000);
+				} catch (e) {
+					console.error('Fallback copy failed:', e);
+				}
+				document.body.removeChild(textarea);
+			}
+		}
+		
+		function renderMarkdown(markdownText, elementId) {
+			if (typeof marked !== 'undefined' && markdownText) {
+				const html = marked.parse(markdownText);
+				document.getElementById(elementId).innerHTML = html;
+			} else if (markdownText) {
+			// Fallback: basic markdown rendering
+			const backtick = String.fromCharCode(96);
+			const backtickRegex = new RegExp(backtick + '([^' + backtick + ']+)' + backtick, 'gim');
+			const newlineRegex = new RegExp(String.fromCharCode(10), 'gim');
+				let html = markdownText
+					.replace(/^### (.*$)/gim, '<h3>$1</h3>')
+					.replace(/^## (.*$)/gim, '<h2>$1</h2>')
+					.replace(/^# (.*$)/gim, '<h1>$1</h1>')
+					.replace(/**(.*?)**/gim, '<strong>$1</strong>')
+					.replace(/*(.*?)*/gim, '<em>$1</em>')
+					.replace(backtickRegex, '<code>$1</code>')
+					.replace(newlineRegex, '<br>');
+				document.getElementById(elementId).innerHTML = html;
+			}
+		}
+		
+	// Initialize all event handlers and render markdown
+	function initializeHandlers() {
+		try {
+			// Render markdown for all ticket descriptions
+			document.querySelectorAll('[data-markdown]').forEach(element => {
+				// Decode HTML entities from data attribute
+				const markdownText = element.getAttribute('data-markdown')
+					.replace(/&amp;/g, '&')
+					.replace(/&lt;/g, '<')
+					.replace(/&gt;/g, '>')
+					.replace(/&quot;/g, '"')
+					.replace(/&#039;/g, "'");
+				const elementId = element.id;
+				renderMarkdown(markdownText, elementId);
+			});
+			
+			// Use event delegation on the container for better performance
+			const container = document.querySelector('.container');
+			if (container) {
+				// Tab clicks
+				container.addEventListener('click', function(e) {
+					if (e.target.classList.contains('tab') || e.target.closest('.tab')) {
+						const tab = e.target.classList.contains('tab') ? e.target : e.target.closest('.tab');
+						const tabName = tab.getAttribute('data-tab');
+						if (tabName) {
+							e.preventDefault();
+							e.stopPropagation();
+							switchTab(tabName, e);
+						}
+					}
+					// Test header clicks
+					else if (e.target.closest('.test-header')) {
+						const header = e.target.closest('.test-header');
+						if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && !e.target.closest('button')) {
+							toggleTestDetails(header);
+						}
+					}
+					// Section header clicks
+					else if (e.target.closest('.section-header')) {
+						const header = e.target.closest('.section-header');
+						if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && !e.target.closest('button')) {
+							toggleSection(header);
+						}
+					}
+					// Ticket details header clicks
+					else if (e.target.closest('.ticket-details-header')) {
+						const header = e.target.closest('.ticket-details-header');
+						if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && !e.target.closest('button')) {
+							toggleTicketDetails(header);
+						}
+					}
+					// Copy button clicks
+					else if (e.target.classList.contains('copy-button') || e.target.closest('.copy-button')) {
+						const button = e.target.classList.contains('copy-button') ? e.target : e.target.closest('.copy-button');
+						e.preventDefault();
+						e.stopPropagation();
+						
+						// Get the text to copy - prefer markdown if available, otherwise use regular text
+						let textToCopy = button.getAttribute('data-copy-markdown') || button.getAttribute('data-copy-text');
+						
+						if (textToCopy) {
+							// Decode HTML entities
+							textToCopy = textToCopy
+								.replace(/&amp;/g, '&')
+								.replace(/&lt;/g, '<')
+								.replace(/&gt;/g, '>')
+								.replace(/&quot;/g, '"')
+								.replace(/&#039;/g, "'");
+							copyToClipboard(textToCopy, button);
+						}
+					}
+				});
+			}
+		} catch (error) {
+			console.error('Error initializing handlers:', error);
+		}
+	}
+	
+	// Run immediately if DOM is ready, otherwise wait for DOMContentLoaded
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initializeHandlers);
+	} else {
+		// DOM is already loaded
+		setTimeout(initializeHandlers, 0);
+	}
+	</script>
+</body>
+</html>
