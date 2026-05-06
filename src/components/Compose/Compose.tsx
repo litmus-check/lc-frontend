@@ -234,7 +234,7 @@ const Compose = ({ params }: ComposePageParams) => {
     device: "desktop",
     os: "windows",
     viewport: "1920x1080",
-    environment: "browserbase"
+    environment: "litmus_cloud"
   });
   const [isComposeConfigModalOpen, setIsComposeConfigModalOpen] = useState(false);
 

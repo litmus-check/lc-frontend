@@ -90,9 +90,6 @@ export const ComposeConfigModal: React.FC<ComposeConfigModalProps> = ({
             onChange={(e) => onConfigChange({ environment: e.target.value })}
             className="font-hanken"
           >
-            <Radio value="browserbase" className="font-hanken text-sm">
-              Browserbase
-            </Radio>
             <Radio value="litmus_cloud" className="font-hanken text-sm">
               Litmus Cloud
             </Radio>

@@ -2410,9 +2410,6 @@ export default function TestPageComponent({ test_id, suite_id, duplicate_from, s
               <Radio value="litmus_cloud" className="font-hanken text-sm" data-testid="test-environment-litmus-cloud">
                 Litmus Cloud
               </Radio>
-              <Radio value="browserbase" className="font-hanken text-sm" data-testid="test-environment-browserbase">
-                Browserbase
-              </Radio>
             </Radio.Group>
           </div>
         </div>
