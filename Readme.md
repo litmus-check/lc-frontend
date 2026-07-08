@@ -1,6 +1,27 @@
-# LitmusCheck – Getting Started
+# Litmus Check — Frontend
 
-This guide covers deploying the LitmusCheck frontend in two scenarios: **Vercel** (hosted) and **on-premises** (virtual machine).
+The web frontend for **[Litmus Check](https://litmuscheck.com)**, the open-source, AI-powered testing environment for Playwright. Write end-to-end tests in plain English, get Playwright code instantly, run them, and auto-triage failures — all from a self-hostable UI.
+
+- 🌐 **Website:** https://litmuscheck.com
+- 📚 **Documentation:** https://documentation.litmuscheck.com
+- ⚙️ **Backend / QA engine:** https://github.com/litmus-check/lc-server
+- 🛠️ **Triage CLI (npm):** https://www.npmjs.com/package/litmus-agent
+
+This repository is the **Next.js frontend**. It talks to the [`lc-server`](https://github.com/litmus-check/lc-server) backend for authentication, test execution, and triage — so to run the full product, deploy this app alongside `lc-server`.
+
+## The Litmus Check ecosystem
+
+| Component | Repository | What it does |
+|-----------|------------|--------------|
+| Frontend (this repo) | [`litmus-check/lc-frontend`](https://github.com/litmus-check/lc-frontend) | Next.js UI for writing, running, and triaging tests |
+| Backend / QA engine | [`litmus-check/lc-server`](https://github.com/litmus-check/lc-server) | Flask + Playwright engine that runs tests and powers the auth/APIs this frontend calls |
+| Triage CLI | [`litmus-agent`](https://www.npmjs.com/package/litmus-agent) | Drop-in CLI to triage Playwright failures from a JSON report + traces |
+
+---
+
+## Getting Started
+
+This guide covers deploying the Litmus Check frontend in two scenarios: **Vercel** (hosted) and **on-premises** (virtual machine). It requires a running [`lc-server`](https://github.com/litmus-check/lc-server) backend that this app points at via `NEXT_PUBLIC_LITMUSCHECK_URL`.
 
 ---
 
