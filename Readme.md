@@ -239,3 +239,5 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | Blank page | JS errors | Check browser console; verify Sentry DSN if using error tracking |
 
 ---
+
+[Litmus Check](https://www.litmuscheck.com)
